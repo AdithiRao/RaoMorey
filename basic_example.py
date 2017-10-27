@@ -21,6 +21,7 @@ def update_line(num, data, line):
 class Building():
     x=[]
     y=[]
+
 groceries=Building()
 groceries.x=[-0.2+k*0.01 for k in range(40)]
 groceries.y=[0.4 for k in range(40)]
