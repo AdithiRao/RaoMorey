@@ -20,6 +20,7 @@ def update_line(num, data, line):
 class Building():
     x=[]
     y=[]
+
 groceries=Building()
 houses=Building()
 groceries.x=[0.2,-0.4,-0.1]
