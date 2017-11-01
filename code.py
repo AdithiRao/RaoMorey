@@ -1,6 +1,9 @@
 import numpy as np
+from dijkstra import pathFind
+import matplotlib.pyplot as plt
 def close(num1,num2):
     return abs(num1-num2)<1e-5
+
 class Point:
     def __init__(self,xpos,ypos,clas="House"):
         self.x=xpos
@@ -86,6 +89,7 @@ roads=[Segment(Point(0,0),Point(2,0)),Segment(Point(0,-1),Point(2,-1)),Segment(P
 
 intersections=[]
 
+
 for k in range(len(roads)):
     for i in range(len(roads)):
         if i!=k:
@@ -106,14 +110,17 @@ for point in points:
         if pointOnSegment(point,road):
             point.on.append(road)
 adj=np.zeros((len(points),len(points)))
+points=points
 
+print(points)
 for k in range(len(points)):
     for j in points[k].on:
         result=[]
         minDist=1e5
-        minI=0
+        minI=None
         for i in range(len(points)):
             if i!=k:
+                print(i==k)
                 test1=pointOnSegment(points[i],j)
                 if test1:
                     dist=distance(points[i],points[k])
@@ -122,16 +129,27 @@ for k in range(len(points)):
                         tempI=minI
                         minDist=dist
                         minI=i
+        print("temp is",tempI)
+        print("point is",points[k])
+        if temp:
+            print(points[minI],points[tempI])
         vector1=points[minI]-points[k]
         vector2=points[tempI]-points[k]
         dproduct=vector1.dot(vector2)
         if minDist>30:
             break
         adj[k][minI]=minDist
+        if not temp or temp>30:
+            break
         if dproduct<0:
             adj[k][tempI]=temp
 
 print(adj)
+quit()
+init=1
+fin =17
+route=pathFind(adj,init,fin)
+print(route)
 quit()
 yresult=[]
 xresult=[]
