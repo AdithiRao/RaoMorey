@@ -1,7 +1,6 @@
-points=[]
-
 def distance(point1,point2):
     return ((point1.x-point2.x)**2+(point1.y-point2.y)**2+(point1.z-point2.z)**2)**0.5
+
 def intersect(line1,line2):
     x1=line1.initpoint.x
     x2=line1.finalpoint.x
@@ -47,6 +46,8 @@ def dot(point1,point2):
 
 def magnitude(point1):
     return (point1.x**2+point1.y**2+point1.z**2)**0.5
+
+points=[]
 
 for k in range(len(points)):
     for j in points[k].roads:
