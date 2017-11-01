@@ -81,6 +81,3 @@ for k in range(len(path)-1):
         xresult.append(element)
     for element in yarray:
         yresult.append(element)
-        
-
-

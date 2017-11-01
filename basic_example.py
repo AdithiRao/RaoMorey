@@ -17,12 +17,12 @@ def update_line(num, data, line):
 
 
 #buildings
-class Building():
+class Points():
     x=[]
     y=[]
 
-groceries=Building()
-houses=Building()
+groceries=Points()
+houses=Points()
 groceries.x=[0.2,-0.4,-0.1]
 groceries.y=[0.4,0.5,0.6]
 tempx= [(-5+0.1*i)/10 for i in range(0,400,7)]
