@@ -1,21 +1,23 @@
-
+import numpy as np
+def close(num1,num2):
+    return abs(num1-num2)<1e-5
 class Point:
     def __init__(self,xpos,ypos,clas="House"):
         self.x=xpos
         self.y=ypos
         self.location=(xpos,ypos)
         self.clas=clas
+        self.on=[]
     def __add__(self,other):
         return Point(self.x+other.x,self.y+other.y)
     def __sub__(self,other):
         return Point(self.x-other.x,self.y-other.y)
     def __str__(self):
         return str(self.location)
-    def __eq__(self,other):
-        return self.x==other.x and self.y==other.y
     def __repr__(self):
         return str(self)
-        
+    def __eq__(self,other):
+        return close(self.x,other.x) and close(self.y,other.y)
     def dot(self,other):
         return self.x*other.x+self.y*other.y
 
@@ -60,42 +62,59 @@ def collinear(point1,point2,point3):
 
     return abs(x1*(y2-y3)+x2*(y3-y1)+x3*(y1-y2))<0.0001
 
-def pointOnSegment(point,segment):
+def pointOnSegment(point,wall):
     test1=collinear(point,wall.init,wall.fin)
     fewinitx=min(wall.init.x,wall.fin.x)
     morinitx=max(wall.init.x,wall.fin.x)  
     fewinity=min(wall.init.y,wall.fin.y)
     morinity=max(wall.init.y,wall.fin.y)
+    
+    xtest=(fewinitx-0.0001<=point.x) and (point.x<=morinitx+0.0001)
+    ytest=(fewinity-0.0001<=point.y) and (point.y<=morinity+0.0001)
+
+    test2= xtest and ytest
+
+    return test1 and test2
+
+
 
 houses=[Point(0,1),Point(-1,1),Point(-2,1),Point(0,0),Point(1,0),Point(2,0),Point(0,-1),Point(1,-1),Point(2,-1)]
 stores=[Point(5,1),Point(4,4),Point(0,6)]
-offices=[Point(2,8),(5,8),(7,4)]
+offices=[Point(2,8),Point(5,8),Point(7,4)]
 
-roads=[Segment(Point(0,-1),Point(3,-1)),Segment(Point(-3,1),Point(5,1)),Segment(Point(0,-1),Point(-0,6)),Segment(Point(4,1),Point(4,4)),Segment(Point(0,4),Point(7,4)),Segment(Point(2,4),Point(2,8)),Segment(Point(2,8),Point(5,8)),Segment(Point(5,4),Point(5,8))]
+roads=[Segment(Point(0,0),Point(2,0)),Segment(Point(0,-1),Point(2,-1)),Segment(Point(-2,1),Point(5,1)),Segment(Point(0,-1),Point(-0,6)),Segment(Point(4,1),Point(4,4)),Segment(Point(0,4),Point(7,4)),Segment(Point(2,4),Point(2,8)),Segment(Point(2,8),Point(5,8)),Segment(Point(5,4),Point(5,8))]
 
 intersections=[]
 
-for k in range(len(roads))
-    for i in range(len(roads))
+for k in range(len(roads)):
+    for i in range(len(roads)):
         if i!=k:
             try:
                 intsect=intersect(roads[i],roads[k])
-                intersections.append(intsect)
+                if pointOnSegment(intsect,roads[i]) and pointOnSegment(intsect,roads[k]):
+                    intersections.append(intsect)
             except:
                 pass
 
-print(roads)
+points=houses+stores+offices
 
-
-path=[]
+for element in intersections:
+    if element not in points:
+        points.append(element)
+for point in points:
+    for road in roads:
+        if pointOnSegment(point,road):
+            point.on.append(road)
+adj=np.zeros((len(points),len(points)))
 
 for k in range(len(points)):
-    for j in points[k].roads:
+    for j in points[k].on:
         result=[]
         minDist=1e5
+        minI=0
         for i in range(len(points)):
             if i!=k:
-                test1=PointOnLine(points[i],j)
+                test1=pointOnSegment(points[i],j)
                 if test1:
                     dist=distance(points[i],points[k])
                     if dist<minDist:
@@ -103,12 +122,17 @@ for k in range(len(points)):
                         tempI=minI
                         minDist=dist
                         minI=i
-        vector1=point[minI]-points[k]
-        vector2=point[tempI]-points[k]
+        vector1=points[minI]-points[k]
+        vector2=points[tempI]-points[k]
         dproduct=vector1.dot(vector2)
+        if minDist>30:
+            break
         adj[k][minI]=minDist
         if dproduct<0:
             adj[k][tempI]=temp
+
+print(adj)
+quit()
 yresult=[]
 xresult=[]
 for k in range(len(path)-1):
